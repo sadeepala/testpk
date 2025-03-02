@@ -1,0 +1,552 @@
+id: combined-downloader
+name: Combined TikTok and Instagram Downloader
+type: html
+content: |-
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>CH Media Downloader</title>
+      <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+      <style>
+          :root {
+              --primary-color: #00ffff;
+              --secondary-color: #ff00ff;
+              --bg-dark: #0a0a1a;
+              --text-color: #e0e0e0;
+          }
+
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+
+          body {
+              font-family: 'Chakra Petch', sans-serif;
+              background: radial-gradient(circle at 20% 20%, #1a1a1a, #0a0a0a);
+              color: var(--text-color);
+              min-height: 100vh;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding: 20px;
+              overflow-x: hidden;
+          }
+
+          .cyber-container {
+              width: 100%;
+              max-width: 1000px;
+              background: rgba(20, 20, 40, 0.8);
+              border-radius: 20px;
+              padding: 30px;
+              box-shadow: 
+                  0 0 30px rgba(0, 255, 255, 0.2),
+                  0 0 60px rgba(255, 0, 255, 0.1);
+              position: relative;
+              overflow: hidden;
+          }
+
+          .cyber-header {
+              text-align: center;
+              margin-bottom: 20px;
+          }
+
+          .cyber-logo {
+              width: 80px;
+              height: 80px;
+              background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+              border-radius: 50%;
+              display: inline-flex;
+              justify-content: center;
+              align-items: center;
+              margin-bottom: 10px;
+              box-shadow: 
+                  0 0 20px var(--primary-color),
+                  0 0 40px var(--secondary-color);
+          }
+
+          .cyber-logo img {
+              width: 50%;
+              filter: brightness(1.2) contrast(1.5);
+          }
+
+          .cyber-title {
+              font-size: 1.8rem;
+              background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+          }
+
+          .input-section {
+              display: flex;
+              flex-direction: column;
+              gap: 15px;
+              margin-bottom: 20px;
+          }
+
+          .cyber-input {
+              width: 100%;
+              padding: 12px;
+              background: rgba(30, 30, 50, 0.7);
+              border: 2px solid var(--primary-color);
+              border-radius: 10px;
+              color: var(--text-color);
+              font-family: 'Chakra Petch', sans-serif;
+          }
+
+          .button-container {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+              justify-content: center;
+          }
+
+          .btn {
+              flex-grow: 1;
+              padding: 12px;
+              background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+              border: none;
+              border-radius: 10px;
+              color: var(--bg-dark);
+              cursor: pointer;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              transition: transform 0.3s ease;
+              min-width: 120px;
+          }
+
+          .btn:hover {
+              transform: scale(1.05);
+          }
+
+          .preview-container {
+              display: flex;
+              flex-direction: column;
+              gap: 20px;
+              margin-bottom: 20px;
+          }
+
+          .video-preview {
+              width: 100%;
+              border-radius: 15px;
+              overflow: hidden;
+              box-shadow: 
+                  0 0 20px rgba(0, 255, 255, 0.3),
+                  0 0 40px rgba(255, 0, 255, 0.2);
+          }
+
+          .video-preview video {
+              width: 100%;
+              border-radius: 15px;
+          }
+
+          .video-details {
+              background: rgba(30, 30, 50, 0.5);
+              padding: 15px;
+              border-radius: 15px;
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 10px;
+          }
+
+          .detail-item {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+              font-weight: bold;
+          }
+
+          .detail-item span {
+              font-size: 1.2rem;
+              color: var(--text-color);
+          }
+
+          .download-buttons {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+              justify-content: center;
+          }
+
+          .download-btn {
+              flex-grow: 1;
+              padding: 12px;
+              border: none;
+              border-radius: 10px;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              cursor: pointer;
+              transition: transform 0.3s ease;
+              min-width: 150px;
+          }
+
+          .watermark-btn {
+              background: linear-gradient(45deg, #ff4500, #ff6347);
+              color: white;
+          }
+
+          .no-watermark-btn {
+              background: linear-gradient(45deg, #00ffff, #1e90ff);
+              color: var(--bg-dark);
+          }
+
+          .audio-btn {
+              background: linear-gradient(45deg, #ff00ff, #ff1493);
+              color: white;
+          }
+
+          .url-history {
+              background: rgba(30, 30, 50, 0.5);
+              padding: 15px;
+              border-radius: 10px;
+              max-height: 200px;
+              overflow-y: auto;
+          }
+
+          .url-history-item {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+              padding: 10px;
+              background: rgba(40, 40, 60, 0.7);
+              border-radius: 5px;
+          }
+
+          .loader {
+              display: none;
+              margin: 1rem 0;
+              text-align: center;
+          }
+
+          .loader span {
+              display: inline-block;
+              width: 20px;
+              height: 20px;
+              border: 3px solid #00ff00;
+              border-radius: 50%;
+              border-top-color: transparent;
+              animation: spin 1s linear infinite;
+          }
+
+          @keyframes spin {
+              to { transform: rotate(360deg); }
+          }
+
+          .error {
+              color: #ff4444;
+              margin-top: 1rem;
+              text-align: center;
+          }
+
+          .next-btn {
+              margin-top: 1rem;
+              background: linear-gradient(135deg, #ff00ff, #0080ff);
+          }
+
+          @media (max-width: 600px) {
+              .cyber-container {
+                  padding: 15px;
+              }
+
+              .cyber-title {
+                  font-size: 1.5rem;
+              }
+
+              .video-details {
+                  grid-template-columns: 1fr;
+              }
+
+              .button-container,
+              .download-buttons {
+                  flex-direction: column;
+              }
+
+              .btn, .download-btn {
+                  width: 100%;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="cyber-container">
+          <div class="cyber-header">
+              <div class="cyber-logo">
+                  <img src="https://www.tiktok.com/favicon.ico" alt="TikTok Logo">
+              </div>
+              <h1 class="cyber-title">CH Media Downloader</h1>
+          </div>
+          <div class="input-section">
+              <input type="text" class="cyber-input" id="mediaUrl" placeholder="Paste TikTok or Instagram Video URL 🌐">
+              <button class="btn" onclick="analyzeMedia()">
+                  Analyze Media 🤖
+              </button>
+              <button class="btn next-btn" onclick="nextMedia()">
+                  Next Media ➡️
+              </button>
+          </div>
+          <div id="previewContainer"></div>
+          <div id="urlHistory" class="url-history">
+              <h3>Recent URLs</h3>
+          </div>
+      </div>
+
+      <script>
+          let mediaHistory = [];
+          let currentMediaIndex = -1;
+          let currentMediaData = null;
+
+          function showError(message) {
+              const resultDiv = document.getElementById('previewContainer');
+              resultDiv.innerHTML = `<div class="error">${message}</div>`;
+          }
+
+          function updateUrlHistory() {
+              const container = document.getElementById('urlHistory');
+              container.innerHTML = '<h3>Recent URLs</h3>';
+              
+              mediaHistory.slice().reverse().forEach((url, displayIndex) => {
+                  const actualIndex = mediaHistory.length - 1 - displayIndex;
+                  container.innerHTML += `
+                      <div class="url-history-item">
+                          <span>${url.substring(0, 25)}...</span>
+                          <button onclick="loadHistoryMedia(${actualIndex})">Load 🔄</button>
+                      </div>
+                  `;
+              });
+          }
+
+          function loadHistoryMedia(index) {
+              if (index >= 0 && index < mediaHistory.length) {
+                  currentMediaIndex = index;
+                  document.getElementById('mediaUrl').value = mediaHistory[index];
+                  analyzeMedia();
+              }
+          }
+
+          function nextMedia() {
+              if (mediaHistory.length === 0) {
+                  document.getElementById('mediaUrl').value = '';
+                  document.getElementById('previewContainer').innerHTML = '';
+                  return;
+              }
+              
+              currentMediaIndex = (currentMediaIndex - 1 + mediaHistory.length) % mediaHistory.length;
+              document.getElementById('mediaUrl').value = mediaHistory[currentMediaIndex];
+              analyzeMedia();
+          }
+
+          async function analyzeMedia() {
+              const url = document.getElementById('mediaUrl').value.trim();
+              const previewContainer = document.getElementById('previewContainer');
+
+              if (!url) {
+                  showError('Enter valid URL 🚫');
+                  return;
+              }
+
+              previewContainer.innerHTML = `
+                  <div style="display: flex; justify-content: center; align-items: center; height: 200px;">
+                      <div style="
+                          width: 50px;
+                          height: 50px;
+                          border: 4px solid transparent;
+                          border-top: 4px solid var(--primary-color);
+                          border-radius: 50%;
+                          animation: spin 1s linear infinite;
+                      "></div>
+                  </div>
+              `;
+
+              if (!url) {
+                  previewContainer.innerHTML = '<p>Enter valid URL 🚫</p>';
+                  return;
+              }
+
+              try {
+                  if (url.includes('tiktok.com')) {
+                      const tiktokApiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`;
+                      const response = await fetch(tiktokApiUrl);
+                      const data = await response.json();
+
+                      if (data.code === 0 && data.data) {
+                          currentMediaData = data.data;
+                          renderTikTokPreview(data.data);
+                      } else {
+                          showError('TikTok analysis failed 🤖');
+                      }
+                  } else if (url.includes('instagram.com')) {
+                      const instaApiUrl = 'https://bff.listnr.tech/backend/user/getInfoYT';
+                      const response = await fetch(instaApiUrl, {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                              url: url,
+                              platform: 'instagram',
+                              type: 'video'
+                          })
+                      });
+
+                      const data = await response.json();
+                      
+                      if (data.url) {
+                          currentMediaData = data;
+                          renderInstagramPreview(data);
+                      } else {
+                          showError('Instagram video not found. Please check the link');
+                      }
+                  } else {
+                      showError('Unsupported URL. Please enter a TikTok or Instagram link 🚫');
+                  }
+
+                  if (!mediaHistory.includes(url)) {
+                      mediaHistory.push(url);
+                      currentMediaIndex = mediaHistory.length - 1;
+                      if (mediaHistory.length > 5) mediaHistory.shift();
+                      updateUrlHistory();
+                  }
+              } catch (error) {
+                  showError('Connection Error 🚨');
+              }
+          }
+
+          function renderTikTokPreview(videoData) {
+              document.getElementById('previewContainer').innerHTML = `
+                  <div class="preview-container">
+                      <div class="video-preview">
+                          <video controls>
+                              <source src="${videoData.play}" type="video/mp4">
+                          </video>
+                      </div>
+                      <div class="video-details">
+                          <div class="detail-item">
+                              <span>⏱️</span> Duration
+                              <span>${videoData.duration}s</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>❤️</span> Likes
+                              <span>${videoData.digg_count}</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>💬</span> Comments
+                              <span>${videoData.comment_count}</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>🔁</span> Shares
+                              <span>${videoData.share_count}</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>👤</span> Author
+                              <span>${videoData.author.nickname}</span>
+                          </div>
+                      </div>
+                      <div class="download-buttons">
+                          <button class="download-btn watermark-btn" onclick="downloadVideo('wmplay')">
+                              💦 Watermarked
+                          </button>
+                          <button class="download-btn no-watermark-btn" onclick="downloadVideo('play')">
+                              🌟 Clean Version
+                          </button>
+                          <button class="download-btn audio-btn" onclick="downloadAudio()">
+                              🎵 Audio Only
+                          </button>
+                      </div>
+                  </div>
+              `;
+          }
+
+          function renderInstagramPreview(videoData) {
+              document.getElementById('previewContainer').innerHTML = `
+                  <div class="preview-container">
+                      <div class="video-preview">
+                          <video controls>
+                              <source src="${videoData.url}" type="video/mp4">
+                              Your browser does not support the video tag.
+                          </video>
+                      </div>
+                      <div class="video-details">
+                          <div class="detail-item">
+                              <span>👁️</span> Views
+                              <span>${videoData.views || 'N/A'}</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>❤️</span> Likes
+                              <span>${videoData.likes || 'N/A'}</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>📅</span> Date
+                              <span>${videoData.date || 'N/A'}</span>
+                          </div>
+                          <div class="detail-item">
+                              <span>🔁</span> Shares
+                              <span>${videoData.shares || 'N/A'}</span>
+                          </div>
+                      </div>
+                      <div class="download-buttons">
+                          <a href="${videoData.url}" download class="download-btn">
+                              <button>Download Now ${videoData.size ? `(${videoData.size})` : ''}</button>
+                          </a>
+                      </div>
+                  </div>
+              `;
+          }
+
+          async function downloadVideo(type) {
+              if (!currentMediaData) return;
+              
+              const downloadBtn = document.querySelector(`.${type === 'wmplay' ? 'watermark-btn' : 'no-watermark-btn'}`);
+              const originalText = downloadBtn.innerHTML;
+              
+              try {
+                  downloadBtn.innerHTML = '⬇️ Downloading...';
+                  downloadBtn.disabled = true;
+
+                  // Fetch the video as blob
+                  const response = await fetch(currentMediaData[type]);
+                  const blob = await response.blob();
+                  
+                  // Create downloadable link
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.style.display = 'none';
+                  a.href = url;
+                  a.download = `tiktok_${Date.now()}.mp4`;
+                  document.body.appendChild(a);
+                  a.click();
+                  
+                  // Cleanup
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+              } catch (error) {
+                  alert('Download failed! Please try again.');
+              } finally {
+                  downloadBtn.innerHTML = originalText;
+                  downloadBtn.disabled = false;
+              }
+          }
+
+          async function downloadAudio() {
+              if (!currentMediaData?.music) return;
+              
+              const audioBtn = document.querySelector('.audio-btn');
+              const originalText = audioBtn.innerHTML;
+              
+              try {
+                  audioBtn.innerHTML = '🎵 Processing...';
+                  audioBtn.disabled = true;
+
+                  // Fetch audio as blob
+                  const response = await fetch(currentMediaData.music);
+                  const blob = await response.blob();
+                  
+                  // Create downloadable link
+                  const url = window.URL.createObject
